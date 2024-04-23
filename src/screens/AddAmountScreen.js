@@ -13,6 +13,9 @@ import {addAmountStore} from '../store';
 import {Dropdown} from '.';
 import {EXPENSE_INFO, I_EXPENSES, I_TYPE, I_TYPE_KEY} from '../common/constant';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import {openDatabase} from 'react-native-sqlite-storage';
+
+var db = openDatabase({name: 'UserDatabase.db'});
 
 const styles = StyleSheet.create({
   main: {
@@ -96,6 +99,50 @@ export const AddAmountScreen = observer(({navigation}) => {
   const {selectedExpense, expenseInfo, type} = addAmountStore;
 
   useEffect(() => {
+    db.transaction(txn => {
+      txn.executeSql(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='table_user'",
+        [],
+        (tx, res) => {
+          console.log('item:', res.rows.length);
+          if (res.rows.length === 0) {
+            txn.executeSql('DROP TABLE IF EXISTS table_user', []);
+            txn.executeSql(
+              'CREATE TABLE IF NOT EXISTS table_user(user_id INTEGER PRIMARY KEY AUTOINCREMENT, amount INT(10), date VARCHAR(20), type VARCHAR(10), reasons VARCHAR(20), description VARCHAR(50))',
+              [],
+            );
+          }
+        },
+      );
+    });
+  }, []);
+
+  const saveData = () => {
+    console.log(
+      expenseInfo?.amount,
+      expenseInfo?.date,
+      type?.displayName,
+      selectedExpense?.displayName,
+      expenseInfo?.note,
+    );
+    db.transaction(txn => {
+      txn.executeSql(
+        'INSERT INFO table_user( amount, date, type, reasons, description ) VALUES (?, ?, ?, ?, ?)',
+        [
+          expenseInfo?.amount,
+          expenseInfo?.date,
+          type?.displayName,
+          selectedExpense?.displayName,
+          expenseInfo?.note,
+        ],
+        (txt, res) => {
+          console.log(res);
+        },
+      );
+    });
+  };
+
+  useEffect(() => {
     if (!expenseInfo.date) {
       addAmountStore.updateCreateExpenseByKey(EXPENSE_INFO.DATE, new Date());
     }
@@ -107,13 +154,11 @@ export const AddAmountScreen = observer(({navigation}) => {
   };
 
   const handleDateChange = (event, selectedDate) => {
-    // Platform specific logic for Android
     if (Platform.OS === 'android') {
-      setShowDatePicker(false); // Hide the date picker on Android
+      setShowDatePicker(false);
     }
 
     if (selectedDate) {
-      // Update the selected date in the store
       addAmountStore.updateCreateExpenseByKey(EXPENSE_INFO.DATE, selectedDate);
       console.log(selectedDate);
     }
@@ -232,7 +277,7 @@ export const AddAmountScreen = observer(({navigation}) => {
   };
   const bottomButton = () => {
     return (
-      <TouchableOpacity style={styles.buttonStyle}>
+      <TouchableOpacity style={styles.buttonStyle} onPress={() => saveData()}>
         <Text style={{...styles.selectedTxt, ...{color: colors.white}}}>
           Save
         </Text>
