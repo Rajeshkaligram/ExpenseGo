@@ -99,7 +99,7 @@ export const AddAmountScreen = observer(({navigation}) => {
     if (!expenseInfo.date) {
       addAmountStore.updateCreateExpenseByKey(EXPENSE_INFO.DATE, new Date());
     }
-  }, []);
+  }, [expenseInfo.date]);
 
   const toggleType = () => {
     const newType = type.key === I_TYPE_KEY.EXPENSE ? I_TYPE[1] : I_TYPE[0];

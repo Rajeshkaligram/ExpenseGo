@@ -8,7 +8,7 @@ import store from './src/store';
 class App extends Component {
   render() {
     return (
-      <Provider store={store}>
+      <Provider root={store}>
         <SafeAreaView style={styles.main}>
           <MainStack />
         </SafeAreaView>
