@@ -5,12 +5,14 @@ const DEFAULT_SETTINGS = {
   selectedExpense: I_EXPENSES[0],
   expenseInfo: {},
   type: I_TYPE[0],
+  allTransaction: [],
 };
 
 export class AddAmountStore {
   @observable selectedExpense: any;
   @observable expenseInfo: any;
   @observable type: any;
+  @observable allTransaction: any;
 
   constructor() {
     this.init();
@@ -27,6 +29,11 @@ export class AddAmountStore {
   @action
   updateSelectedExpense = (value: any) => {
     this.selectedExpense = value;
+  };
+
+  @action
+  updateAllTransaction = (value: any) => {
+    this.allTransaction = value;
   };
 
   @action

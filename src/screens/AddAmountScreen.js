@@ -118,16 +118,9 @@ export const AddAmountScreen = observer(({navigation}) => {
   }, []);
 
   const saveData = () => {
-    console.log(
-      expenseInfo?.amount,
-      expenseInfo?.date,
-      type?.displayName,
-      selectedExpense?.displayName,
-      expenseInfo?.note,
-    );
     db.transaction(txn => {
       txn.executeSql(
-        'INSERT INFO table_user( amount, date, type, reasons, description ) VALUES (?, ?, ?, ?, ?)',
+        'INSERT INTO table_user (amount, date, type, reasons, description) VALUES (?, ?, ?, ?, ?)',
         [
           expenseInfo?.amount,
           expenseInfo?.date,
@@ -136,7 +129,16 @@ export const AddAmountScreen = observer(({navigation}) => {
           expenseInfo?.note,
         ],
         (txt, res) => {
-          console.log(res);
+          console.log('Inserted rows:', res);
+          if (res.rowsAffected > 0) {
+            navigation.goBack();
+            console.log('Data saved successfully');
+          } else {
+            console.log('Failed to save data');
+          }
+        },
+        error => {
+          console.log(error);
         },
       );
     });

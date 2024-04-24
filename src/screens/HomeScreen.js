@@ -1,7 +1,11 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React from 'react';
+import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React, {useEffect} from 'react';
 import {observer} from 'mobx-react';
 import {VectorIcon, colors, fonts, monthDate} from '../common';
+import {openDatabase} from 'react-native-sqlite-storage';
+import {addAmountStore} from '../store';
+
+var db = openDatabase({name: 'UserDatabase.db'});
 
 const styles = StyleSheet.create({
   main: {
@@ -56,7 +60,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   commonBlackTxt: {
-    fontFamily: fonts.medium,
+    fontFamily: fonts.bold,
     color: colors.black,
     fontSize: 18,
   },
@@ -74,6 +78,25 @@ const styles = StyleSheet.create({
 });
 
 export const HomeScreen = observer(({navigation}) => {
+  const {allTransaction} = addAmountStore;
+  useEffect(() => {
+    db.transaction(txn => {
+      txn.executeSql('SELECT * FROM table_user', [], (_txn, res) => {
+        console.log(res?.rows?.item);
+        var temp = [];
+        for (let i = 0; i < res.rows.length; ++i) {
+          temp.push(res.rows.item(i));
+          console.log(res.rows.item(i));
+        }
+        addAmountStore.updateAllTransaction(temp);
+      });
+    });
+  }, []);
+
+  useEffect(() => {
+    console.log(allTransaction);
+  }, [allTransaction]);
+
   const headerComponent = () => {
     var currentDate = new Date();
     return (
@@ -98,20 +121,28 @@ export const HomeScreen = observer(({navigation}) => {
     return (
       <View style={styles.bodyMain}>
         <Text style={styles.boldBlackTxt}>All Transction</Text>
-        <View style={styles.row2}>
-          <View style={styles.row}>
-            <View style={styles.iconBack}>
-              <VectorIcon
-                type="MaterialIcons"
-                name="fastfood"
-                color={colors.white}
-                size={20}
-              />
-            </View>
-            <Text style={styles.commonBlackTxt}>Food</Text>
-          </View>
-          <Text style={styles.commonBlackTxt}>900</Text>
-        </View>
+        <FlatList
+          data={allTransaction}
+          keyExtractor={item => item.user_id}
+          renderItem={({item}) => {
+            return (
+              <View style={styles.row2}>
+                <View style={styles.row}>
+                  <View style={styles.iconBack}>
+                    <VectorIcon
+                      type="MaterialIcons"
+                      name="fastfood"
+                      color={colors.white}
+                      size={20}
+                    />
+                  </View>
+                  <Text style={styles.commonBlackTxt}>{item?.reasons}</Text>
+                </View>
+                <Text style={styles.commonBlackTxt}>{item?.amount}</Text>
+              </View>
+            );
+          }}
+        />
       </View>
     );
   };
