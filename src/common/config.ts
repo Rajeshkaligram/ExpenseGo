@@ -10,6 +10,7 @@ const colors = {
   darkGreyText: '#424F7B',
   red: '#FB1010',
   mainColor: '#8044FF',
+  sky: '#11A9F4',
 };
 
 const fonts = {

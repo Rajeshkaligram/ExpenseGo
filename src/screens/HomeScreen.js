@@ -78,24 +78,11 @@ const styles = StyleSheet.create({
 });
 
 export const HomeScreen = observer(({navigation}) => {
-  const {allTransaction} = addAmountStore;
-  useEffect(() => {
-    db.transaction(txn => {
-      txn.executeSql('SELECT * FROM table_user', [], (_txn, res) => {
-        console.log(res?.rows?.item);
-        var temp = [];
-        for (let i = 0; i < res.rows.length; ++i) {
-          temp.push(res.rows.item(i));
-          console.log(res.rows.item(i));
-        }
-        addAmountStore.updateAllTransaction(temp);
-      });
-    });
-  }, []);
+  const {allTransaction, getData} = addAmountStore;
 
   useEffect(() => {
-    console.log(allTransaction);
-  }, [allTransaction]);
+    getData();
+  }, [getData]);
 
   const headerComponent = () => {
     var currentDate = new Date();
@@ -138,7 +125,25 @@ export const HomeScreen = observer(({navigation}) => {
                   </View>
                   <Text style={styles.commonBlackTxt}>{item?.reasons}</Text>
                 </View>
-                <Text style={styles.commonBlackTxt}>{item?.amount}</Text>
+                <View style={styles.row}>
+                  <VectorIcon
+                    type="Entypo"
+                    name={item?.type === 'Expense' ? 'minus' : 'plus'}
+                    size={20}
+                    color={item?.type === 'Expense' ? colors.black : colors.sky}
+                  />
+                  <Text
+                    style={{
+                      ...styles.commonBlackTxt,
+                      ...{
+                        fontFamily: fonts.black,
+                        color:
+                          item?.type === 'Expense' ? colors.black : colors.sky,
+                      },
+                    }}>
+                    {item?.amount}
+                  </Text>
+                </View>
               </View>
             );
           }}

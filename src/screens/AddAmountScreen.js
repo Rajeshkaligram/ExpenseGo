@@ -118,30 +118,8 @@ export const AddAmountScreen = observer(({navigation}) => {
   }, []);
 
   const saveData = () => {
-    db.transaction(txn => {
-      txn.executeSql(
-        'INSERT INTO table_user (amount, date, type, reasons, description) VALUES (?, ?, ?, ?, ?)',
-        [
-          expenseInfo?.amount,
-          expenseInfo?.date,
-          type?.displayName,
-          selectedExpense?.displayName,
-          expenseInfo?.note,
-        ],
-        (txt, res) => {
-          console.log('Inserted rows:', res);
-          if (res.rowsAffected > 0) {
-            navigation.goBack();
-            console.log('Data saved successfully');
-          } else {
-            console.log('Failed to save data');
-          }
-        },
-        error => {
-          console.log(error);
-        },
-      );
-    });
+    addAmountStore.saveData();
+    navigation.goBack();
   };
 
   useEffect(() => {
