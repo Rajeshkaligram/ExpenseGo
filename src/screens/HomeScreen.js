@@ -2,11 +2,8 @@ import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {useEffect} from 'react';
 import {observer} from 'mobx-react';
 import {VectorIcon, colors, fonts, monthDate} from '../common';
-import {openDatabase} from 'react-native-sqlite-storage';
 import {addAmountStore} from '../store';
 import {I_EXPENSES} from '../common/constant';
-
-var db = openDatabase({name: 'UserDatabase.db'});
 
 const styles = StyleSheet.create({
   main: {
@@ -23,12 +20,12 @@ const styles = StyleSheet.create({
   commonTxt: {
     fontFamily: fonts.medium,
     color: colors.white,
-    fontSize: 13,
+    fontSize: 15,
   },
   boldTxt: {
     fontFamily: fonts.bold,
     color: colors.white,
-    fontSize: 30,
+    fontSize: 35,
   },
   row: {
     flexDirection: 'row',

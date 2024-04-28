@@ -1,4 +1,5 @@
 import {
+  KeyboardAvoidingView,
   Platform,
   StyleSheet,
   Text,
@@ -13,9 +14,6 @@ import {addAmountStore} from '../store';
 import {Dropdown} from '.';
 import {EXPENSE_INFO, I_EXPENSES, I_TYPE, I_TYPE_KEY} from '../common/constant';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import {openDatabase} from 'react-native-sqlite-storage';
-
-var db = openDatabase({name: 'UserDatabase.db'});
 
 const styles = StyleSheet.create({
   main: {
@@ -83,6 +81,17 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 10,
   },
+  disableButtonStyle: {
+    width: '90%',
+    height: 45,
+    backgroundColor: colors.greyBorder,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    position: 'absolute',
+    bottom: 10,
+  },
   inputStyle2: {
     width: '100%',
     borderBottomWidth: 1,
@@ -96,25 +105,11 @@ const styles = StyleSheet.create({
 export const AddAmountScreen = observer(({navigation}) => {
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [buttonStyle, setButtonStyle] = useState(false);
   const {selectedExpense, expenseInfo, type} = addAmountStore;
 
   useEffect(() => {
-    db.transaction(txn => {
-      txn.executeSql(
-        "SELECT name FROM sqlite_master WHERE type='table' AND name='table_user'",
-        [],
-        (tx, res) => {
-          console.log('item:', res.rows.length);
-          if (res.rows.length === 0) {
-            txn.executeSql('DROP TABLE IF EXISTS table_user', []);
-            txn.executeSql(
-              'CREATE TABLE IF NOT EXISTS table_user(user_id INTEGER PRIMARY KEY AUTOINCREMENT, amount INT(10), date VARCHAR(20), type VARCHAR(10), reasons VARCHAR(20), description VARCHAR(50))',
-              [],
-            );
-          }
-        },
-      );
-    });
+    addAmountStore.createTable();
     return addAmountStore.updateCreateExpenseInfo({});
   }, []);
 
@@ -144,6 +139,13 @@ export const AddAmountScreen = observer(({navigation}) => {
       console.log(selectedDate);
     }
   };
+  useEffect(() => {
+    if (expenseInfo?.amount && expenseInfo?.amount !== '') {
+      setButtonStyle(true);
+    } else {
+      setButtonStyle(false);
+    }
+  }, [expenseInfo?.amount]);
 
   const headerComponet = () => {
     return (
@@ -170,6 +172,7 @@ export const AddAmountScreen = observer(({navigation}) => {
             placeholderTextColor={colors.black}
             keyboardType="number-pad"
             value={expenseInfo?.amount}
+            // onChange={txt => validateAmount(txt)}
             onChangeText={item =>
               addAmountStore.updateCreateExpenseByKey(EXPENSE_INFO.AMOUNT, item)
             }
@@ -258,7 +261,10 @@ export const AddAmountScreen = observer(({navigation}) => {
   };
   const bottomButton = () => {
     return (
-      <TouchableOpacity style={styles.buttonStyle} onPress={() => saveData()}>
+      <TouchableOpacity
+        style={buttonStyle ? styles.buttonStyle : styles.disableButtonStyle}
+        onPress={() => saveData()}
+        disabled={!buttonStyle}>
         <Text style={{...styles.selectedTxt, ...{color: colors.white}}}>
           Save
         </Text>
@@ -266,7 +272,9 @@ export const AddAmountScreen = observer(({navigation}) => {
     );
   };
   return (
-    <View style={styles.main}>
+    <KeyboardAvoidingView
+      style={styles.main}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       {headerComponet()}
       {bodyComponent()}
       <Dropdown
@@ -275,6 +283,6 @@ export const AddAmountScreen = observer(({navigation}) => {
         setVisibility={setShowCategoryDropdown}
       />
       {bottomButton()}
-    </View>
+    </KeyboardAvoidingView>
   );
 });

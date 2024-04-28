@@ -1,13 +1,7 @@
 import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import {observer} from 'mobx-react';
-import {
-  VectorIcon,
-  colors,
-  fonts,
-  formatDate,
-  formatDateWithMonth,
-} from '../common';
+import {VectorIcon, colors, fonts, formatDateWithMonth} from '../common';
 import {addAmountStore} from '../store';
 
 const styles = StyleSheet.create({

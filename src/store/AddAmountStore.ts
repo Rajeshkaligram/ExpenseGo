@@ -59,6 +59,26 @@ export class AddAmountStore {
   };
 
   @action
+  createTable = async () => {
+    (await db).transaction(txn => {
+      txn.executeSql(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='table_user'",
+        [],
+        (tx, res) => {
+          console.log('item:', res.rows.length);
+          if (res.rows.length === 0) {
+            txn.executeSql('DROP TABLE IF EXISTS table_user', []);
+            txn.executeSql(
+              'CREATE TABLE IF NOT EXISTS table_user(user_id INTEGER PRIMARY KEY AUTOINCREMENT, amount INT(10), date VARCHAR(20), type VARCHAR(10), reasons VARCHAR(20), description VARCHAR(50))',
+              [],
+            );
+          }
+        },
+      );
+    });
+  };
+
+  @action
   getData = async () => {
     (await db).transaction(txn => {
       txn.executeSql('SELECT * FROM table_user', [], (_txn, res) => {

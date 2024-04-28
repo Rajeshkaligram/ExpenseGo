@@ -10,6 +10,7 @@ export const I_EXPENSES_KEY = {
   Beauty: 'Beauty',
   Vegetables: 'Vegetables',
   Bills: 'Bills',
+  Others: 'Others',
 };
 
 export const I_EXPENSES = [
@@ -75,6 +76,13 @@ export const I_EXPENSES = [
     type: 'FontAwesome5',
     name: 'book',
     color: colors.mainColor,
+  },
+  {
+    key: I_EXPENSES_KEY.Others,
+    displayName: I_EXPENSES_KEY.Others,
+    type: 'FontAwesome',
+    name: 'recycle',
+    color: colors.sky,
   },
 ];
 
