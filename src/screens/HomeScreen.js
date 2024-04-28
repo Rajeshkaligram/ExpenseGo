@@ -63,8 +63,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   buttonStyle: {
-    height: 50,
-    width: 50,
+    height: 60,
+    width: 60,
     borderRadius: 999,
     backgroundColor: colors.mainColor,
     justifyContent: 'center',
