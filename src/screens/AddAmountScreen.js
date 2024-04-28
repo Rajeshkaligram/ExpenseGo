@@ -115,6 +115,7 @@ export const AddAmountScreen = observer(({navigation}) => {
         },
       );
     });
+    return addAmountStore.updateCreateExpenseInfo({});
   }, []);
 
   const saveData = () => {

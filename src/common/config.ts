@@ -11,6 +11,7 @@ const colors = {
   red: '#FB1010',
   mainColor: '#8044FF',
   sky: '#11A9F4',
+  green: '#41D02A',
 };
 
 const fonts = {

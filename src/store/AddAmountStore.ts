@@ -74,6 +74,28 @@ export class AddAmountStore {
   };
 
   @action
+  deleteData = async (itemId: number) => {
+    (await db).transaction(txn => {
+      txn.executeSql(
+        'DELETE FROM table_user WHERE user_id = ?', // Change 'id' to 'user_id'
+        [itemId],
+        (txt, res) => {
+          console.log('Deleted rows:', res);
+          if (res.rowsAffected > 0) {
+            this.getData(); // Refresh data after deletion
+            console.log('Data deleted successfully');
+          } else {
+            console.log('Failed to delete data');
+          }
+        },
+        error => {
+          console.log(error);
+        },
+      );
+    });
+  };
+
+  @action
   updateSelectedExpense = (value: any) => {
     this.selectedExpense = value;
   };

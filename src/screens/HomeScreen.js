@@ -4,6 +4,7 @@ import {observer} from 'mobx-react';
 import {VectorIcon, colors, fonts, monthDate} from '../common';
 import {openDatabase} from 'react-native-sqlite-storage';
 import {addAmountStore} from '../store';
+import {I_EXPENSES} from '../common/constant';
 
 var db = openDatabase({name: 'UserDatabase.db'});
 
@@ -75,6 +76,10 @@ const styles = StyleSheet.create({
     bottom: 30,
     right: 30,
   },
+  border: {
+    borderBottomColor: colors.greyBorder,
+    borderBottomWidth: 0.6,
+  },
 });
 
 export const HomeScreen = observer(({navigation}) => {
@@ -83,6 +88,29 @@ export const HomeScreen = observer(({navigation}) => {
   useEffect(() => {
     getData();
   }, [getData]);
+
+  // Calculate total expense
+  const totalExpense = allTransaction.reduce(
+    (total, transaction) =>
+      transaction.type === 'Expense' ? total + transaction.amount : total,
+    0,
+  );
+
+  // Calculate total income
+  const totalIncome = allTransaction.reduce(
+    (total, transaction) =>
+      transaction.type === 'Income' ? total + transaction.amount : total,
+    0,
+  );
+
+  // Calculate total amount (income - expense)
+  const totalAmount = allTransaction.reduce(
+    (total, transaction) =>
+      transaction.type === 'Income'
+        ? total + transaction.amount
+        : total - transaction.amount,
+    0,
+  );
 
   const headerComponent = () => {
     var currentDate = new Date();
@@ -98,59 +126,78 @@ export const HomeScreen = observer(({navigation}) => {
           />
           <Text style={styles.commonTxt}>{monthDate(currentDate)}</Text>
         </View>
-        <Text style={styles.boldTxt}>122</Text>
-        <Text style={styles.commonTxt}>Expense: 0</Text>
-        <Text style={styles.commonTxt}>Income: 199</Text>
+        <Text style={styles.boldTxt}>{totalAmount}</Text>
+        <Text style={styles.commonTxt}>Expense: - {totalExpense}</Text>
+        <Text style={styles.commonTxt}>Income: + {totalIncome}</Text>
       </View>
     );
   };
   const bodyContainer = () => {
     return (
       <View style={styles.bodyMain}>
-        <Text style={styles.boldBlackTxt}>All Transction</Text>
+        <Text style={styles.boldBlackTxt}>All Transaction</Text>
         <FlatList
           data={allTransaction}
-          keyExtractor={item => item.user_id}
+          keyExtractor={(item, index) => index.toString()}
           renderItem={({item}) => {
+            const expenseIcon = I_EXPENSES.find(
+              expense => expense.displayName === item.reasons,
+            );
             return (
-              <View style={styles.row2}>
-                <View style={styles.row}>
-                  <View style={styles.iconBack}>
-                    <VectorIcon
-                      type="MaterialIcons"
-                      name="fastfood"
-                      color={colors.white}
-                      size={20}
-                    />
+              <>
+                <TouchableOpacity
+                  style={styles.row2}
+                  onPress={() =>
+                    navigation.navigate('ItemDetailsScreen', {detail: item})
+                  }>
+                  <View style={styles.row}>
+                    <View
+                      style={{
+                        ...styles.iconBack,
+                        backgroundColor: expenseIcon?.color || colors.mainColor,
+                      }}>
+                      <VectorIcon
+                        type={expenseIcon?.type || 'Ionicons'}
+                        name={expenseIcon?.name || 'fast-food'}
+                        color={colors.white}
+                        size={20}
+                      />
+                    </View>
+                    <Text style={styles.commonBlackTxt}>{item?.reasons}</Text>
                   </View>
-                  <Text style={styles.commonBlackTxt}>{item?.reasons}</Text>
-                </View>
-                <View style={styles.row}>
-                  <VectorIcon
-                    type="Entypo"
-                    name={item?.type === 'Expense' ? 'minus' : 'plus'}
-                    size={20}
-                    color={item?.type === 'Expense' ? colors.black : colors.sky}
-                  />
-                  <Text
-                    style={{
-                      ...styles.commonBlackTxt,
-                      ...{
-                        fontFamily: fonts.black,
-                        color:
-                          item?.type === 'Expense' ? colors.black : colors.sky,
-                      },
-                    }}>
-                    {item?.amount}
-                  </Text>
-                </View>
-              </View>
+                  <View style={styles.row}>
+                    <VectorIcon
+                      type="Entypo"
+                      name={item?.type === 'Expense' ? 'minus' : 'plus'}
+                      size={20}
+                      color={
+                        item?.type === 'Expense' ? colors.black : colors.sky
+                      }
+                    />
+                    <Text
+                      style={{
+                        ...styles.commonBlackTxt,
+                        ...{
+                          fontFamily: fonts.black,
+                          color:
+                            item?.type === 'Expense'
+                              ? colors.black
+                              : colors.sky,
+                        },
+                      }}>
+                      {item?.amount}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+                <View style={styles.border} />
+              </>
             );
           }}
         />
       </View>
     );
   };
+
   const bootomButton = () => {
     return (
       <TouchableOpacity
@@ -164,8 +211,11 @@ export const HomeScreen = observer(({navigation}) => {
   return (
     <View style={styles.main}>
       {headerComponent()}
-      {bodyContainer()}
-      {bootomButton()}
+
+      <View style={{flex: 1, paddingBottom: 5}}>
+        {bodyContainer()}
+        {bootomButton()}
+      </View>
     </View>
   );
 });
