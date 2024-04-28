@@ -136,6 +136,7 @@ export const HomeScreen = observer(({navigation}) => {
         <FlatList
           data={allTransaction}
           keyExtractor={(item, index) => index.toString()}
+          showsVerticalScrollIndicator={false}
           renderItem={({item}) => {
             const expenseIcon = I_EXPENSES.find(
               expense => expense.displayName === item.reasons,
