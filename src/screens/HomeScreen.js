@@ -1,9 +1,17 @@
-import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React, {useEffect} from 'react';
 import {observer} from 'mobx-react';
 import {VectorIcon, colors, fonts, monthDate} from '../common';
 import {addAmountStore} from '../store';
 import {I_EXPENSES} from '../common/constant';
+import {icons} from '../common/icons';
 
 const styles = StyleSheet.create({
   main: {
@@ -77,6 +85,20 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.greyBorder,
     borderBottomWidth: 0.6,
   },
+  noImage: {
+    width: 200,
+    height: 200,
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    marginTop: 100,
+    resizeMode: 'contain',
+  },
+  noTxt: {
+    fontFamily: fonts.bold,
+    color: colors.black,
+    fontSize: 20,
+  },
 });
 
 export const HomeScreen = observer(({navigation}) => {
@@ -133,65 +155,73 @@ export const HomeScreen = observer(({navigation}) => {
     return (
       <View style={styles.bodyMain}>
         <Text style={styles.boldBlackTxt}>All Transaction</Text>
-        <FlatList
-          data={allTransaction}
-          keyExtractor={(item, index) => index.toString()}
-          showsVerticalScrollIndicator={false}
-          renderItem={({item}) => {
-            const expenseIcon = I_EXPENSES.find(
-              expense => expense.displayName === item.reasons,
-            );
-            return (
-              <>
-                <TouchableOpacity
-                  style={styles.row2}
-                  onPress={() =>
-                    navigation.navigate('ItemDetailsScreen', {detail: item})
-                  }>
-                  <View style={styles.row}>
-                    <View
-                      style={{
-                        ...styles.iconBack,
-                        backgroundColor: expenseIcon?.color || colors.mainColor,
-                      }}>
-                      <VectorIcon
-                        type={expenseIcon?.type || 'Ionicons'}
-                        name={expenseIcon?.name || 'fast-food'}
-                        color={colors.white}
-                        size={20}
-                      />
+        {allTransaction && allTransaction?.length > 0 ? (
+          <FlatList
+            data={allTransaction}
+            keyExtractor={(item, index) => index.toString()}
+            showsVerticalScrollIndicator={false}
+            renderItem={({item}) => {
+              const expenseIcon = I_EXPENSES.find(
+                expense => expense.displayName === item.reasons,
+              );
+              return (
+                <>
+                  <TouchableOpacity
+                    style={styles.row2}
+                    onPress={() =>
+                      navigation.navigate('ItemDetailsScreen', {detail: item})
+                    }>
+                    <View style={styles.row}>
+                      <View
+                        style={{
+                          ...styles.iconBack,
+                          backgroundColor:
+                            expenseIcon?.color || colors.mainColor,
+                        }}>
+                        <VectorIcon
+                          type={expenseIcon?.type || 'Ionicons'}
+                          name={expenseIcon?.name || 'fast-food'}
+                          color={colors.white}
+                          size={20}
+                        />
+                      </View>
+                      <Text style={styles.commonBlackTxt}>{item?.reasons}</Text>
                     </View>
-                    <Text style={styles.commonBlackTxt}>{item?.reasons}</Text>
-                  </View>
-                  <View style={styles.row}>
-                    <VectorIcon
-                      type="Entypo"
-                      name={item?.type === 'Expense' ? 'minus' : 'plus'}
-                      size={20}
-                      color={
-                        item?.type === 'Expense' ? colors.black : colors.sky
-                      }
-                    />
-                    <Text
-                      style={{
-                        ...styles.commonBlackTxt,
-                        ...{
-                          fontFamily: fonts.black,
-                          color:
-                            item?.type === 'Expense'
-                              ? colors.black
-                              : colors.sky,
-                        },
-                      }}>
-                      {item?.amount}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-                <View style={styles.border} />
-              </>
-            );
-          }}
-        />
+                    <View style={styles.row}>
+                      <VectorIcon
+                        type="Entypo"
+                        name={item?.type === 'Expense' ? 'minus' : 'plus'}
+                        size={20}
+                        color={
+                          item?.type === 'Expense' ? colors.black : colors.sky
+                        }
+                      />
+                      <Text
+                        style={{
+                          ...styles.commonBlackTxt,
+                          ...{
+                            fontFamily: fonts.black,
+                            color:
+                              item?.type === 'Expense'
+                                ? colors.black
+                                : colors.sky,
+                          },
+                        }}>
+                        {item?.amount}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                  <View style={styles.border} />
+                </>
+              );
+            }}
+          />
+        ) : (
+          <View style={{justifyContent: 'center', alignItems: 'center'}}>
+            <Image source={icons.NO_TRANSACTION} style={styles.noImage} />
+            <Text style={styles.noTxt}>No Transaction Found!</Text>
+          </View>
+        )}
       </View>
     );
   };

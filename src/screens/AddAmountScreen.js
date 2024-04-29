@@ -1,4 +1,5 @@
 import {
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
@@ -114,6 +115,7 @@ export const AddAmountScreen = observer(({navigation}) => {
   }, []);
 
   const saveData = () => {
+    Keyboard.dismiss();
     addAmountStore.saveData();
     navigation.goBack();
   };
