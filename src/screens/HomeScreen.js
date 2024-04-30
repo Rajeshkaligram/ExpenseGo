@@ -6,11 +6,16 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {observer} from 'mobx-react';
 import {VectorIcon, colors, fonts, monthDate} from '../common';
 import {addAmountStore} from '../store';
 import {I_EXPENSES} from '../common/constant';
+import {
+  InterstitialAd,
+  TestIds,
+  AdEventType,
+} from 'react-native-google-mobile-ads';
 import {icons} from '../common/icons';
 
 const styles = StyleSheet.create({
@@ -101,12 +106,41 @@ const styles = StyleSheet.create({
   },
 });
 
+const adUnitId = 'ca-app-pub-9819010998390525/5904368029';
+
+const interstitial = InterstitialAd.createForAdRequest(adUnitId, {
+  keywords: ['fashion', 'clothing'],
+});
+
 export const HomeScreen = observer(({navigation}) => {
   const {allTransaction, getData} = addAmountStore;
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = interstitial.addAdEventListener(
+      AdEventType.LOADED,
+      () => {
+        setLoaded(true);
+      },
+    );
+
+    // Start loading the interstitial straight away
+    interstitial.load();
+
+    // Unsubscribe from events on unmount
+    return unsubscribe;
+  }, []);
 
   useEffect(() => {
     getData();
   }, [getData]);
+
+  useEffect(() => {
+    // Show the ad if it's loaded and the component is mounted for the first time
+    if (loaded) {
+      interstitial.show();
+    }
+  }, [loaded]);
 
   // Calculate total expense
   const totalExpense = allTransaction.reduce(

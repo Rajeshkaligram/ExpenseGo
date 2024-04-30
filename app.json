@@ -1,4 +1,7 @@
 {
   "name": "ExpenseGo",
-  "displayName": "ExpenseGo"
+  "displayName": "ExpenseGo",
+  "react-native-google-mobile-ads": {
+    "android_app_id": "ca-app-pub-9819010998390525~1245485017"
+  }
 }
