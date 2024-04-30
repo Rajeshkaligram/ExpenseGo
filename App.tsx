@@ -10,7 +10,7 @@ class App extends Component {
   componentDidMount() {
     setTimeout(() => {
       SplashScreen.hide();
-    }, 1000);
+    }, 2000);
   }
   render() {
     return (

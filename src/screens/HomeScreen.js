@@ -154,7 +154,7 @@ export const HomeScreen = observer(({navigation}) => {
   const bodyContainer = () => {
     return (
       <View style={styles.bodyMain}>
-        <Text style={styles.boldBlackTxt}>All Transaction</Text>
+        <Text style={styles.boldBlackTxt}>All Expense</Text>
         {allTransaction && allTransaction?.length > 0 ? (
           <FlatList
             data={allTransaction}
@@ -219,7 +219,7 @@ export const HomeScreen = observer(({navigation}) => {
         ) : (
           <View style={{justifyContent: 'center', alignItems: 'center'}}>
             <Image source={icons.NO_TRANSACTION} style={styles.noImage} />
-            <Text style={styles.noTxt}>No Transaction Found!</Text>
+            <Text style={styles.noTxt}>No Expense Found!</Text>
           </View>
         )}
       </View>
