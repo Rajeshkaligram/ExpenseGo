@@ -107,7 +107,9 @@ export const ItemDetailsScreen = observer(({navigation, route}) => {
               Amount
             </Text>
           </View>
-          <Text style={styles.commonBlackTxt}>{detail?.amount}</Text>
+          <Text style={styles.commonBlackTxt}>
+            {detail?.amount?.toLocaleString()}
+          </Text>
         </View>
         <View style={styles.row}>
           <View style={styles.row2}>

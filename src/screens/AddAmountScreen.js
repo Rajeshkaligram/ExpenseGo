@@ -23,8 +23,9 @@ const styles = StyleSheet.create({
   },
   headerMain: {
     backgroundColor: colors.mainColor,
-    justifyContent: 'center',
-    alignItems: 'flex-start',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingHorizontal: 10,
     paddingVertical: 20,
   },
@@ -101,6 +102,11 @@ const styles = StyleSheet.create({
     color: colors.black,
     fontSize: 20,
   },
+  headingTxt: {
+    fontFamily: fonts.bold,
+    color: colors.white,
+    fontSize: 20,
+  },
 });
 
 export const AddAmountScreen = observer(({navigation}) => {
@@ -160,6 +166,8 @@ export const AddAmountScreen = observer(({navigation}) => {
             size={25}
           />
         </TouchableOpacity>
+        <Text style={styles.headingTxt}>{`Add ${type?.displayName}`}</Text>
+        <View style={{width: '5%'}} />
       </View>
     );
   };
@@ -173,7 +181,7 @@ export const AddAmountScreen = observer(({navigation}) => {
             style={styles.inputStyle}
             placeholderTextColor={colors.black}
             keyboardType="number-pad"
-            value={expenseInfo?.amount}
+            value={expenseInfo?.amount?.toLocaleString()}
             // onChange={txt => validateAmount(txt)}
             onChangeText={item =>
               addAmountStore.updateCreateExpenseByKey(EXPENSE_INFO.AMOUNT, item)

@@ -179,9 +179,13 @@ export const HomeScreen = observer(({navigation}) => {
           />
           <Text style={styles.commonTxt}>{monthDate(currentDate)}</Text>
         </View>
-        <Text style={styles.boldTxt}>{totalAmount}</Text>
-        <Text style={styles.commonTxt}>Expense: - {totalExpense}</Text>
-        <Text style={styles.commonTxt}>Income: + {totalIncome}</Text>
+        <Text style={styles.boldTxt}>{totalAmount.toLocaleString()}</Text>
+        <Text style={styles.commonTxt}>
+          Expense: - {totalExpense.toLocaleString()}
+        </Text>
+        <Text style={styles.commonTxt}>
+          Income: + {totalIncome.toLocaleString()}
+        </Text>
       </View>
     );
   };
@@ -241,7 +245,7 @@ export const HomeScreen = observer(({navigation}) => {
                                 : colors.sky,
                           },
                         }}>
-                        {item?.amount}
+                        {item?.amount?.toLocaleString()}
                       </Text>
                     </View>
                   </TouchableOpacity>
