@@ -13,10 +13,12 @@ import {addAmountStore} from '../store';
 import {I_EXPENSES} from '../common/constant';
 import {
   InterstitialAd,
-  TestIds,
   AdEventType,
+  BannerAd,
+  BannerAdSize,
 } from 'react-native-google-mobile-ads';
 import {icons} from '../common/icons';
+import {bannerAddId, interstitialId} from '../utils/app-utils';
 
 const styles = StyleSheet.create({
   main: {
@@ -83,7 +85,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',
-    bottom: 30,
+    bottom: 2,
     right: 30,
   },
   border: {
@@ -106,9 +108,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const adUnitId = 'ca-app-pub-9819010998390525/5904368029';
-
-const interstitial = InterstitialAd.createForAdRequest(adUnitId, {
+const interstitial = InterstitialAd.createForAdRequest(interstitialId, {
   keywords: ['fashion', 'clothing'],
 });
 
@@ -264,6 +264,15 @@ export const HomeScreen = observer(({navigation}) => {
     );
   };
 
+  const bannerAddComponent = () => {
+    return (
+      <BannerAd
+        unitId={bannerAddId}
+        size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+      />
+    );
+  };
+
   const bootomButton = () => {
     return (
       <TouchableOpacity
@@ -277,11 +286,11 @@ export const HomeScreen = observer(({navigation}) => {
   return (
     <View style={styles.main}>
       {headerComponent()}
-
       <View style={{flex: 1, paddingBottom: 5}}>
         {bodyContainer()}
         {bootomButton()}
       </View>
+      {bannerAddComponent()}
     </View>
   );
 });
