@@ -1,3 +1,4 @@
+/* eslint-disable react/react-in-jsx-scope */
 import {createStackNavigator} from '@react-navigation/stack';
 import {AddAmountScreen, HomeScreen, ItemDetailsScreen} from '../screens';
 import {NavigationContainer} from '@react-navigation/native';

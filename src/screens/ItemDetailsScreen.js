@@ -45,10 +45,31 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     maxWidth: '50%',
   },
+  buttonStyle: {
+    width: '90%',
+    height: 45,
+    backgroundColor: colors.mainColor,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    position: 'absolute',
+    bottom: 10,
+  },
+  selectedTxt: {
+    fontFamily: fonts.bold,
+    color: colors.black,
+    fontSize: 20,
+  },
 });
 
 export const ItemDetailsScreen = observer(({navigation, route}) => {
   const {detail} = route.params;
+
+  const handleEdit = () => {
+    const {amount, date, description, reasons, type, user_id} = detail;
+  };
+
   const headerComponet = () => {
     return (
       <View style={styles.headerMain}>
@@ -165,12 +186,23 @@ export const ItemDetailsScreen = observer(({navigation, route}) => {
       </View>
     );
   };
+
+  const editButton = () => {
+    return (
+      <TouchableOpacity style={styles.buttonStyle} onPress={handleEdit}>
+        <Text style={{...styles.selectedTxt, ...{color: colors.white}}}>
+          Edit
+        </Text>
+      </TouchableOpacity>
+    );
+  };
   return (
     <View style={styles.main}>
       {headerComponet()}
       <View style={{paddingHorizontal: 20, paddingVertical: 20}}>
         {bodyContainer()}
       </View>
+      {/* {editButton()} */}
     </View>
   );
 });

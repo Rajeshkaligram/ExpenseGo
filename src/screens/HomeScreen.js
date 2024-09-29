@@ -1,6 +1,7 @@
 import {
   FlatList,
   Image,
+  SectionList,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -106,6 +107,13 @@ const styles = StyleSheet.create({
     color: colors.black,
     fontSize: 20,
   },
+  sectionHeader: {
+    fontSize: 10,
+    fontFamily: fonts.regular,
+    color: colors.black,
+    textAlign: 'center',
+    paddingTop: 3,
+  },
 });
 
 const interstitial = InterstitialAd.createForAdRequest(interstitialId, {
@@ -189,70 +197,128 @@ export const HomeScreen = observer(({navigation}) => {
       </View>
     );
   };
+
+  const renderItem = ({item}) => {
+    const expenseIcon = I_EXPENSES.find(
+      expense => expense.displayName === item.reasons,
+    );
+    return (
+      <>
+        <TouchableOpacity
+          style={styles.row2}
+          onPress={() =>
+            navigation.navigate('ItemDetailsScreen', {detail: item})
+          }>
+          <View style={styles.row}>
+            <View
+              style={{
+                ...styles.iconBack,
+                backgroundColor: expenseIcon?.color || colors.mainColor,
+              }}>
+              <VectorIcon
+                type={expenseIcon?.type || 'Ionicons'}
+                name={expenseIcon?.name || 'fast-food'}
+                color={colors.white}
+                size={20}
+              />
+            </View>
+            <Text style={styles.commonBlackTxt}>{item?.reasons}</Text>
+          </View>
+          <View style={styles.row}>
+            <VectorIcon
+              type="Entypo"
+              name={item?.type === 'Expense' ? 'minus' : 'plus'}
+              size={20}
+              color={item?.type === 'Expense' ? colors.black : colors.sky}
+            />
+            <Text
+              style={{
+                ...styles.commonBlackTxt,
+                ...{
+                  fontFamily: fonts.black,
+                  color: item?.type === 'Expense' ? colors.black : colors.sky,
+                },
+              }}>
+              {item?.amount?.toLocaleString()}
+            </Text>
+          </View>
+        </TouchableOpacity>
+        <View style={styles.border} />
+      </>
+    );
+  };
+
+  const groupByMonth = transactions => {
+    // Create a sorted copy of the transactions by date
+    const sortedTransactions = transactions
+      .slice()
+      .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    const groupedData = {};
+
+    sortedTransactions.forEach(transaction => {
+      const date = new Date(transaction.date);
+      const month = date.toLocaleString('default', {month: 'long'});
+      const year = date.getFullYear();
+      const monthYear = `${month} ${year}`;
+
+      if (!groupedData[monthYear]) {
+        groupedData[monthYear] = [];
+      }
+      groupedData[monthYear].push(transaction);
+    });
+
+    // Sort months in the correct order from January to December
+    const monthOrder = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+
+    // Sort grouped data by month and year
+    const sortedGroupedData = Object.keys(groupedData)
+      .sort((a, b) => {
+        const [monthA, yearA] = a.split(' ');
+        const [monthB, yearB] = b.split(' ');
+
+        // Compare by year first
+        if (yearA !== yearB) return parseInt(yearA) - parseInt(yearB);
+
+        // If years are the same, compare by month order
+        return monthOrder.indexOf(monthA) - monthOrder.indexOf(monthB);
+      })
+      .map(monthYear => ({
+        title: monthYear,
+        data: groupedData[monthYear],
+      }));
+
+    return sortedGroupedData;
+  };
+
   const bodyContainer = () => {
+    const sections = groupByMonth(allTransaction);
+
     return (
       <View style={styles.bodyMain}>
         <Text style={styles.boldBlackTxt}>All Expense</Text>
-        {allTransaction && allTransaction?.length > 0 ? (
-          <FlatList
-            data={allTransaction}
+        {sections.length > 0 ? (
+          <SectionList
+            sections={sections}
             keyExtractor={(item, index) => index.toString()}
             showsVerticalScrollIndicator={false}
-            renderItem={({item}) => {
-              const expenseIcon = I_EXPENSES.find(
-                expense => expense.displayName === item.reasons,
-              );
-              return (
-                <>
-                  <TouchableOpacity
-                    style={styles.row2}
-                    onPress={() =>
-                      navigation.navigate('ItemDetailsScreen', {detail: item})
-                    }>
-                    <View style={styles.row}>
-                      <View
-                        style={{
-                          ...styles.iconBack,
-                          backgroundColor:
-                            expenseIcon?.color || colors.mainColor,
-                        }}>
-                        <VectorIcon
-                          type={expenseIcon?.type || 'Ionicons'}
-                          name={expenseIcon?.name || 'fast-food'}
-                          color={colors.white}
-                          size={20}
-                        />
-                      </View>
-                      <Text style={styles.commonBlackTxt}>{item?.reasons}</Text>
-                    </View>
-                    <View style={styles.row}>
-                      <VectorIcon
-                        type="Entypo"
-                        name={item?.type === 'Expense' ? 'minus' : 'plus'}
-                        size={20}
-                        color={
-                          item?.type === 'Expense' ? colors.black : colors.sky
-                        }
-                      />
-                      <Text
-                        style={{
-                          ...styles.commonBlackTxt,
-                          ...{
-                            fontFamily: fonts.black,
-                            color:
-                              item?.type === 'Expense'
-                                ? colors.black
-                                : colors.sky,
-                          },
-                        }}>
-                        {item?.amount?.toLocaleString()}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                  <View style={styles.border} />
-                </>
-              );
-            }}
+            renderItem={renderItem}
+            renderSectionHeader={({section: {title}}) => (
+              <Text style={styles.sectionHeader}>{title}</Text>
+            )}
           />
         ) : (
           <View style={{justifyContent: 'center', alignItems: 'center'}}>

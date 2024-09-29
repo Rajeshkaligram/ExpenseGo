@@ -36,11 +36,11 @@ export class AddAmountStore {
       txn.executeSql(
         'INSERT INTO table_user (amount, date, type, reasons, description) VALUES (?, ?, ?, ?, ?)',
         [
-          this.expenseInfo?.amount,
-          this.expenseInfo?.date,
-          this.type?.displayName,
-          this.selectedExpense?.displayName,
-          this.expenseInfo?.note,
+          this.expenseInfo?.amount?.toString(),
+          this.expenseInfo?.date?.toString(),
+          this.type?.displayName?.toString(),
+          this.selectedExpense?.displayName?.toString(),
+          this.expenseInfo?.note?.toString(),
         ],
         (txt, res) => {
           console.log('Inserted rows:', res);

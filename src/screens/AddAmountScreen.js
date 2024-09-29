@@ -219,6 +219,7 @@ export const AddAmountScreen = observer(({navigation}) => {
             mode="date"
             display="default"
             onChange={handleDateChange}
+            maximumDate={new Date()}
           />
         )}
         <View style={styles.row}>
