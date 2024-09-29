@@ -36,6 +36,7 @@ const styles = StyleSheet.create({
     fontFamily: fonts.medium,
     fontSize: 30,
     paddingLeft: 20,
+    color: colors.black,
   },
   bodyMain: {
     paddingHorizontal: 24,
