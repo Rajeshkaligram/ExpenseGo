@@ -356,7 +356,7 @@ export const HomeScreen = observer(({navigation}) => {
         {bodyContainer()}
         {bootomButton()}
       </View>
-      {bannerAddComponent()}
+      {loaded && bannerAddComponent()}
     </View>
   );
 });

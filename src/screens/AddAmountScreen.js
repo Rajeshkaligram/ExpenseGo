@@ -181,9 +181,9 @@ export const AddAmountScreen = observer(({navigation}) => {
             placeholder="Amount"
             style={styles.inputStyle}
             placeholderTextColor={colors.black}
+            color={colors.black}
             keyboardType="number-pad"
             value={expenseInfo?.amount?.toLocaleString()}
-            // onChange={txt => validateAmount(txt)}
             onChangeText={item =>
               addAmountStore.updateCreateExpenseByKey(EXPENSE_INFO.AMOUNT, item)
             }
